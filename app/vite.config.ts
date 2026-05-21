@@ -1,0 +1,24 @@
+import path from 'path';
+import { defineConfig } from 'vite'
+
+// Plugins
+import react from "@vitejs/plugin-react";
+import tailwindcss from '@tailwindcss/vite';
+
+// https://vite.dev/config/
+export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src")
+    }
+  },
+  plugins: [react(), tailwindcss()],
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    hmr: {
+      host: "localhost",
+      port: 5173
+    }
+  }
+})
