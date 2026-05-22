@@ -15,6 +15,7 @@ This document describes the conventions and patterns used in `/app/src`. Follow 
 | DaisyUI | 5 | Semantic component classes |
 | TypeScript | 6 | Strict, `verbatimModuleSyntax` |
 | Vite | 8 | Path alias `@` → `src/` |
+| Vitest | 4 | Unit tests; config lives in `vite.config.ts` |
 
 ---
 
@@ -287,6 +288,44 @@ Cross-module imports use the `@/` alias. Same-folder imports use relative paths.
 - Use DaisyUI semantic classes for color (`bg-base-100`, `bg-base-200`, `text-base-content`) and components (`btn`, `drawer`, `menu`, `card`, etc.).
 - Layout uses Tailwind utility classes (`flex`, `h-screen`, `w-full`, `p-4`).
 - Avoid hardcoded colors — prefer DaisyUI tokens so theming works.
+
+---
+
+## Testing — Vitest
+
+Vitest is already in `devDependencies`. Tests run via `npm test` (script: `"test": "vitest"`).
+
+**Where tests live:** Co-located with the module under test, using the `.test.ts` / `.test.tsx` suffix.
+
+```
+lib/simulation/simulate.ts
+lib/simulation/simulate.test.ts   ← same directory, not a separate __tests__ folder
+lib/store/features/flow.ts
+lib/store/features/flow.test.ts
+```
+
+**What to test:**
+- Pure logic functions (simulation engine, selectors, utility functions) — these are the primary target.
+- Redux reducer cases — test each action against a known initial state.
+- Do **not** write tests for React components in this prototype; focus test effort on the pure logic layer.
+
+**Vitest config** (inside `vite.config.ts`):
+
+```ts
+/// <reference types="vitest" />
+// add inside defineConfig({ ... }):
+test: {
+  environment: "jsdom",
+  globals: true,
+}
+```
+
+**Conventions:**
+- Test files use plain `describe` / `it` / `expect` — no imports needed when `globals: true`.
+- Each `it` tests exactly one behavior; keep assertions focused.
+- Pure functions: pass input directly, assert on return value — no mocks, no store setup.
+- Redux slices: call the reducer directly (`reducer(initialState, action)`) — do not mount a store.
+- All tests must pass (`npm test`) before moving to the next implementation phase.
 
 ---
 
