@@ -2,7 +2,7 @@
 
 Rome is a beautiful React template.
 
-The template is built this with a modern TypeScript stack, and containerized for local development and production deployment.
+The template is built with a modern TypeScript stack, and containerized for both local development and production.
 
 The codebase implements code standards and best practices I've developed over the course of many years in full-stack development.
 
@@ -11,7 +11,7 @@ The codebase implements code standards and best practices I've developed over th
 3. Create lovely development experiences
 4. Build things nobody knew they needed
 
-These attributes serve long term development by maintaining a code quality and architecture that adapts to the chaos intrinsic to fast-pace research teams. Ask me how I know!
+These attributes serve long term development by maintaining a code quality and architecture that adapts to the chaos intrinsic to fast-pace research teams.
 
 ---
 
