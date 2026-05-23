@@ -1,0 +1,7 @@
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfiles/Dockerfile.prod
+    ports:
+      - "5173:8080"
