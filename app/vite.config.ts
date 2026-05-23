@@ -13,6 +13,23 @@ export default defineConfig({
     }
   },
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("/node_modules/react-dom") || id.includes("/node_modules/react/")) {
+            return "vendor-react";
+          }
+          if (id.includes("/node_modules/react-router")) {
+            return "vendor-router";
+          }
+          if (id.includes("/node_modules/@reduxjs/") || id.includes("/node_modules/react-redux/")) {
+            return "vendor-state";
+          }
+        },
+      },
+    },
+  },
   server: {
     host: "0.0.0.0",
     port: 5173,
