@@ -7,8 +7,8 @@ type DataState = {
 };
 
 const initialState: DataState = {
-    string: "Atomic Semi",
-    temperature: undefined
+  string: "ROME",
+  temperature: undefined,
 };
 
 const dataSlice = createSlice({
@@ -20,7 +20,7 @@ const dataSlice = createSlice({
     },
     temperature: (state, action: PayloadAction<number>) => {
       return { ...state, temperature: action.payload };
-    }
+    },
   },
 });
 
