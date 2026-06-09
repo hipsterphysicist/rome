@@ -5,8 +5,14 @@ import { defineConfig } from 'vite'
 import react from "@vitejs/plugin-react";
 import tailwindcss from '@tailwindcss/vite';
 
+/// <reference types="vitest" />
+
 // https://vite.dev/config/
 export default defineConfig({
+  test: {
+    environment: "jsdom",
+    globals: true,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src")

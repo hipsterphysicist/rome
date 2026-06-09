@@ -345,10 +345,17 @@ src/tests/
   flow.test.ts
 ```
 
-**What to test:**
-- Pure logic functions (simulation engine, selectors, utility functions) — these are the primary target.
+**Testing trophy (guides test investment):**
+- **Static analysis** (TypeScript + ESLint) — already configured, catches errors at compile time.
+- **Unit tests** (Vitest) — pure logic, reducers, selectors. Fast, no DOM needed.
+- **Integration tests** (React Testing Library + Vitest) — render real components with a real store, assert on what the user sees. This is where most React apps get the best return on test effort.
+- **E2E tests** (Playwright) — full browser against a running app. Reserve for critical user flows.
+
+This template ships with unit tests only. As the app grows, add `@testing-library/react` for integration tests — they catch regressions that unit tests alone will miss.
+
+**What to test now:**
+- Pure logic functions (simulation engine, selectors, utility functions) — the primary target.
 - Redux reducer cases — test each action against a known initial state.
-- Do **not** write tests for React components in this prototype; focus test effort on the pure logic layer.
 
 **Vitest config** (inside `vite.config.ts`):
 
