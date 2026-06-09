@@ -6,7 +6,7 @@ import data from "./features/data";
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      data
+      data,
     },
   });
 };
