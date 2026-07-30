@@ -1,11 +1,6 @@
 # Rome — Full-Stack TypeScript Template
 
-A scaffolding template for full-stack TypeScript apps: a React SPA (`/app`) and
-a minimal Express API (`/server`), wired together with Docker Compose. Neither
-half is a product — each ships one small example feature that is the reference
-implementation of the pattern new features should copy. Read as a pair, they
-trace the full data lifecycle from a file on the backend to a component on
-screen.
+Rome is a beautiful TypeScript template. This codebase incorporates best practices and design patterns I picked up over many years developing research applications.
 
 ## Layout
 
@@ -26,11 +21,23 @@ rome/
 
 ## Running
 
-```bash
-# Local dev — app on :5173 (HMR), server on :3000, both source-bind-mounted
-docker compose up
+#### Local Development Containers
 
-# Production — hardened images (app via nginx, server as compiled Node)
+```bash
+docker compose build
+
+docker compose -f docker-compose.prod.yaml up
+```
+
+Compose service names are `app` and `server`; inside the Compose network the app
+reaches the API at `http://server:3000`. Each service can also be run on its own
+— see its directory's `CLAUDE.md`.
+
+#### Hardened Production Containers
+
+```bash
+docker compose -f docker-compose.prod.yaml build
+
 docker compose -f docker-compose.prod.yaml up
 ```
 
