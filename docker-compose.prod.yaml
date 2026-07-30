@@ -5,3 +5,12 @@ services:
       dockerfile: Dockerfiles/Dockerfile.prod
     ports:
       - "5173:8080"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfiles/Dockerfile.prod
+    ports:
+      - "3000:3000"

@@ -1,57 +1,56 @@
-# Rome
+# Rome — Full-Stack TypeScript Template
 
-Rome is a beautiful React template. This template ships a strong foundation for user interface development, alongside a highly optimized production image.
+A scaffolding template for full-stack TypeScript apps: a React SPA (`/app`) and
+a minimal Express API (`/server`), wired together with Docker Compose. Neither
+half is a product — each ships one small example feature that is the reference
+implementation of the pattern new features should copy. Read as a pair, they
+trace the full data lifecycle from a file on the backend to a component on
+screen.
 
-The attributes here serve long term development by maintaining a code quality and architecture that adapts to the chaos intrinsic to fast-pace research teams.
-
----
-
-## Architecture
-
-### Frontend Stack
-
-| Layer            | Technology             | Version |
-| ---------------- | ---------------------- | ------- |
-| UI framework     | React                  | 19      |
-| Language         | TypeScript             | 6       |
-| Build tool       | Vite                   | 8       |
-| Routing          | React Router           | 7       |
-| State management | Redux Toolkit          | 2       |
-| Styling          | Tailwind CSS + DaisyUI | 4 / 5   |
-| Testing          | Vitest                 | 4       |
-
-### Source Layout
+## Layout
 
 ```
-app/src/
-  app/          # UI layer — routes, page components, styles
-  lib/
-    client/     # Plain async fetch functions (no hooks)
-    context/    # Provider components (StoreProvider, RouterProvider, DataProvider)
-    store/      # Redux store factory, typed hooks, feature slices
-    types/      # Shared TypeScript types
+rome/
+  app/                       # React SPA — Vite, React Router, Redux Toolkit, Tailwind
+    src/                     #   app/ (UI) + lib/ (infra) + tests/
+    Dockerfiles/             #   Dockerfile.local + hardened Dockerfile.prod (nginx)
+    CLAUDE.md                #   frontend conventions
+  server/                    # Express API — TypeScript, ts-node, JSON over HTTP
+    src/                     #   index.ts + routers/ + lib/ + tests/
+    Dockerfiles/             #   Dockerfile.local + hardened Dockerfile.prod
+    CLAUDE.md                #   backend conventions
+  docker-compose.yaml        # Local dev — both services, bind mounts + HMR
+  docker-compose.prod.yaml   # Production — both services, built images
+  CLAUDE.md                  # Overview + pointers into each half
 ```
 
-### Application Entry
+## Running
 
-`main.tsx` renders a single `<RootProvider />` which composes all providers in a fixed hierarchy. `StoreProvider` (Redux) is the outermost wrapper; `RouterProvider` (React Router) owns the visible UI tree; `DataProvider` is a renderless sibling that fetches external data and dispatches it into the store.
+```bash
+# Local dev — app on :5173 (HMR), server on :3000, both source-bind-mounted
+docker compose up
 
-### State Management
+# Production — hardened images (app via nginx, server as compiled Node)
+docker compose -f docker-compose.prod.yaml up
+```
 
-Redux Toolkit drives all shared state via feature slices. The store is created with a `makeStore()` factory so types are fully inferred — never written by hand. Components read from the store via typed `useAppSelector` hooks; prop drilling for store data is not used.
+Compose service names are `app` and `server`; inside the Compose network the app
+reaches the API at `http://server:3000`. Each service can also be run on its own
+— see its directory's `CLAUDE.md`.
 
-### Data Fetching
+## Data Flow
 
-API calls are plain async functions in `lib/client/` — no hooks, no HTTP libraries. Renderless `DataProvider` components call these functions in `useEffect`, check the Redux store first to guard against redundant fetches, then dispatch results. The app currently integrates with the Open-Meteo API for current temperature data (Austin, TX).
+```
+JSON on disk → DataService (read, cache)              [server/src/lib/services]
+            → express.Router GET /weather/current      [server/src/routers]
+            → Vite dev proxy (/weather → server :3000) [app/vite.config.ts]
+            → client fetch                              [app/src/lib/client]
+            → DataProvider dispatches to Redux          [app/src/lib/context]
+            → components select via useAppSelector      [app/src/app/components]
+```
 
-### Styling
+## Docs
 
-Tailwind v4 is loaded as a Vite plugin — there is no `tailwind.config.js`. DaisyUI v5 provides semantic component classes (`btn`, `drawer`, `menu`, etc.) and theme tokens (`bg-base-100`, `text-base-content`). Hardcoded colors are avoided so theming works across DaisyUI themes.
-
-### Build and Deployment
-
-**Development** (`docker-compose.yaml`): `node:alpine` container running the Vite dev server on port 5173 with HMR and a bind-mounted source tree.
-
-**Production** (`docker-compose.prod.yaml`): Multi-stage Docker build — Node compiles the static bundle with `vite build`, which is then copied into an `nginx:stable-alpine` image. nginx serves on port 8080 with gzip compression and a `try_files` SPA fallback for client-side routing.
-
-The Vite build uses manual chunk splitting to separate vendor bundles (`vendor-react`, `vendor-router`, `vendor-state`) for long-term caching.
+- **`CLAUDE.md`** — repo overview and where to look.
+- **`app/CLAUDE.md`** — frontend conventions.
+- **`server/CLAUDE.md`** — backend conventions.
